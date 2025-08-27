@@ -50,13 +50,13 @@ class NewTableCell: UITableViewCell {
         commentsImageView.contentMode = .scaleAspectFit
         commentsImageView.tintColor = .systemOrange
         
-        let bottomRow = UIStackView(arrangedSubviews: [pointsImageView, pointsLabel, commentsImageView, commentsLabel])
+        let bottomRow = UIStackView(arrangedSubviews: [pointsImageView, pointsLabel, commentsImageView, commentsLabel,UIView()])
         bottomRow.axis = .horizontal
-        bottomRow.distribution = .fillProportionally
-        bottomRow.alignment = .leading
-        bottomRow.spacing = 1
-        bottomRow.setCustomSpacing(1, after: pointsImageView)
-        bottomRow.setCustomSpacing(1, after: commentsImageView)
+        bottomRow.distribution = .fill
+        bottomRow.alignment = .center
+        bottomRow.spacing = 8
+        bottomRow.setCustomSpacing(2, after: pointsImageView)
+        bottomRow.setCustomSpacing(2, after: commentsImageView)
 
         let vStack = UIStackView(arrangedSubviews: [titleLabel, postDetailsLabel, bottomRow])
         vStack.axis = .vertical
@@ -69,7 +69,7 @@ class NewTableCell: UITableViewCell {
             vStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
             vStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
             vStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
-            vStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
+            vStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
         ])
     }
 }
