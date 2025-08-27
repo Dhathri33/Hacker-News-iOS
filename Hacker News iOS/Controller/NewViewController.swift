@@ -7,28 +7,19 @@
 
 import UIKit
 
-struct NewsDetails {
-    let id: String?
-    let title: String?
-    let num_comments: Int?
-    let points: Int?
-    let url: String?
-    let author: String?
-    let created_at: String?
-}
-
-class NewViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-  
+class NewViewController: UIViewController {
+    
+    //MARK: Properties
+    
     let tableView = UITableView()
     let titleLabel = UILabel()
     var newsList: [NewsDetails] = []
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
         setupUI()
-        
         let objNewsList1: NewsDetails = NewsDetails(id: "1", title: "Show HN: Draw a fish and watch it swim with the others", num_comments: 211, points: 813, url: "https://www.google.com", author: "hallak", created_at: "4 days ago")
         let objNewsList2: NewsDetails = NewsDetails(id: "2", title: "At 17, Hannah Cairo solved a major math mystery", num_comments: 125, points: 246, url: "https://www.google.com", author: "baruchel", created_at: "12 hours ago")
         let objNewsList3: NewsDetails = NewsDetails(id: "3", title: "Replacing tmux in my dev workflow", num_comments: 275, points: 242, url: "https://www.google.com", author: "elashri", created_at: "20 hours ago")
@@ -42,21 +33,48 @@ class NewViewController: UIViewController, UITableViewDataSource, UITableViewDel
         newsList.append(objNewsList5)
         newsList.append(objNewsList6)
     }
-    
+}
+
+//MARK: TableView DataSource Methods
+
+extension NewViewController: UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        newsList.count
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: NewTableCell.reuseIdentifier, for: indexPath) as? NewTableCell else {
+            return UITableViewCell()
+        }
+        let newsItem: NewsDetails = newsList[indexPath.row]
+         cell.titleLabel.text = newsItem.title
+         cell.postDetailsLabel.text = "\(newsItem.author ?? " ") . \(newsItem.created_at ?? " ") . by \(newsItem.author ?? " ")"
+         cell.pointsLabel.text = "\(newsItem.points ?? 0)"
+         cell.commentsLabel.text = "\(newsItem.num_comments ?? 0)"
+        return cell
+    }
+}
+
+//MARK: TableView Delegate Methods
+
+extension NewViewController: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        130
+    }
+}
+
+//MARK: Helper functions
+
+extension NewViewController {
     func setupUI() {
-        
         view.backgroundColor = .black
-        
         titleLabel.text = "News"
         titleLabel.textColor = .white
         titleLabel.font = UIFont(name: "TimesNewRomanPS-BoldMT", size: 35)
         titleLabel.textAlignment = .left
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .black
         tableView.register(NewTableCell.self, forCellReuseIdentifier: NewTableCell.reuseIdentifier)
-        
         // Vertical layout
         let vStack = UIStackView(arrangedSubviews: [titleLabel, tableView])
         vStack.axis = .vertical
@@ -70,26 +88,5 @@ class NewViewController: UIViewController, UITableViewDataSource, UITableViewDel
             tableView.heightAnchor.constraint(equalToConstant: 680),
             tableView.widthAnchor.constraint(equalToConstant: 393)
         ])
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        130
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        newsList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: NewTableCell.reuseIdentifier, for: indexPath) as? NewTableCell else {
-            return UITableViewCell()
-        }
-        
-        let newsItem: NewsDetails = newsList[indexPath.row]
-         cell.titleLabel.text = newsItem.title
-         cell.postDetailsLabel.text = "\(newsItem.author ?? " ") . \(newsItem.created_at ?? " ") . by \(newsItem.author ?? " ")"
-         cell.pointsLabel.text = "\(newsItem.points ?? 0)"
-         cell.commentsLabel.text = "\(newsItem.num_comments ?? 0)"
-        return cell
     }
 }

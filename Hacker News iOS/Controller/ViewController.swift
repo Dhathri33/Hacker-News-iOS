@@ -7,15 +7,7 @@
 
 import UIKit
 
-struct News {
-    let id: String?
-    let title: String?
-    let num_comments: Int?
-    let points: Int?
-    let url: String?
-    let author: String?
-    let created_at: String?
-}
+
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     

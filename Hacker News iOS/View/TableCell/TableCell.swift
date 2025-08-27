@@ -8,10 +8,8 @@
 import UIKit
 
 class TableCell: UITableViewCell {
-    
     @IBOutlet weak var titleOfThePost: UILabel!
     @IBOutlet weak var postDetails: UILabel!
     @IBOutlet weak var points: UILabel!
     @IBOutlet weak var numberOfComments: UILabel!
-    
 }

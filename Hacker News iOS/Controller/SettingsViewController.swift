@@ -7,23 +7,9 @@
 
 import UIKit
 
-struct SettingsRow {
-    let icon: String
-    let title: String
-    var detail: String? = nil
-    let kind: RowKind
+class SettingsViewController: UIViewController {
     
-    enum RowKind {
-        case disclosure
-        case toggle(isOn: Bool)
-    }
-}
-
-struct SettingsSection {
-    var rows: [SettingsRow]
-}
-
-class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+    //MARK: Properties
     
     var settingsRows: [SettingsRow] = []
     var sections: [SettingsSection] = []
@@ -33,15 +19,10 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         title = "Settings"
-        
         settingsTableView.dataSource = self
-        settingsTableView.delegate = self
         searchBar.delegate = self
-    
         setupUI()
-        
         let objSettingsRows1: SettingsRow = SettingsRow(icon:  "airplane.circle.fill", title: "Airplane Mode", kind: .toggle(isOn: false))
         let objSettingsRows2: SettingsRow = SettingsRow(icon:  "wifi", title: "Wi-Fi", detail: "Mikasa", kind: .disclosure)
         let objSettingsRows3: SettingsRow = SettingsRow(icon:  "beats.studiobuds.plus.chargingcase.fill", title: "Bluetooth", detail: "On", kind: .disclosure)
@@ -56,7 +37,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         settingsRows.append(objSettingsRow6)
         let objSettingsSection1: SettingsSection = SettingsSection(rows: settingsRows)
         sections.append(objSettingsSection1)
-        
         let objSettingsRows7: SettingsRow = SettingsRow(icon:  "gearshape.fill", title: "General", kind: .disclosure)
         let objSettingsRows8: SettingsRow = SettingsRow(icon:  "accessibility", title: "Accessibility", kind: .disclosure)
         let objSettingsRows9: SettingsRow = SettingsRow(icon:  "hand.tap", title: "Action Button", kind: .disclosure)
@@ -124,21 +104,21 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         visibleSections = sections
         settingsTableView.reloadData()
     }
-    
+}
+
+//MARK: TableView DataSource Methods
+
+extension SettingsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         visibleSections.count
     }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         visibleSections[section].rows.count
     }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.reuseIdentifier, for: indexPath) as? SettingsTableCell else {
             return UITableViewCell()
         }
-        
         let row = visibleSections[indexPath.section].rows[indexPath.row]
         cell.titleLabel.text = row.title
         cell.detailLabel.text = row.detail
@@ -155,26 +135,31 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         }
         return cell
     }
-    
+}
+
+//MARK: Search Delegate Methods
+
+extension SettingsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         applyFilter(searchText)
     }
-    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
     }
-    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
         applyFilter("")
     }
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
-    
+}
+
+//MARK: Helper functions
+
+extension SettingsViewController {
     private func applyFilter(_ text: String) {
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
@@ -183,8 +168,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             return
         }
         let lower = query.lowercased()
-        
-        // Filter rows within each section; drop sections that become empty
         visibleSections = sections.compactMap { section in
             let filteredRows = section.rows.filter { row in
                 let inTitle = row.title.lowercased().contains(lower)
@@ -194,20 +177,13 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         }
         settingsTableView.reloadData()
     }
-    
-    //MARK: Hepler functions
-    
     func setupUI() {
-
         view.backgroundColor = .systemBackground
-        
         searchBar.placeholder = "Search"
         searchBar.sizeToFit()
         settingsTableView.tableHeaderView = searchBar
-        
         settingsTableView.translatesAutoresizingMaskIntoConstraints = false
         settingsTableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.reuseIdentifier)
-        
         view.addSubview(settingsTableView)
         NSLayoutConstraint.activate([
             settingsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 4),
@@ -215,7 +191,5 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             settingsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
             settingsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -4)
         ])
-        
-        //Checking
     }
 }
