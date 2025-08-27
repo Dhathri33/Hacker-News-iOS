@@ -215,5 +215,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             settingsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
             settingsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -4)
         ])
+        
+        //Checking
     }
 }
