@@ -57,6 +57,3 @@ The app demonstrates different use cases of table views by replicating popular i
 
 ---
 
-## 📖 Documentation
-
-## Features - UIKit + Swift - Table views with custom cells - Both Storyboard and programmatic UI approaches - Search bar integration - Simple model-driven architecture
