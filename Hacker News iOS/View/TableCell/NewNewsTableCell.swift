@@ -1,16 +1,10 @@
-//
-//  NewTableCell.swift
-//  Hacker News iOS
-//
-//  Created by Dhathri Bathini on 8/22/25.
-//
-
 import UIKit
 
-class NewTableCell: UITableViewCell {
+class NewNewsTableCell: UITableViewCell {
     
-    static let reuseIdentifier = "NewTableCell"
+    //MARK: Properties
     
+    static let reuseIdentifier = "NewNewsTableCell"
     let titleLabel = UILabel()
     let postDetailsLabel = UILabel()
     let pointsImageView = UIImageView(image: UIImage(systemName: "clock"))
@@ -18,38 +12,35 @@ class NewTableCell: UITableViewCell {
     let commentsImageView = UIImageView(image: UIImage(systemName: "ellipsis.message"))
     let commentsLabel = UILabel()
     
+    //MARK: Initializers for UITableViewCell
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+
+//MARK: Helper functions
+
+extension NewNewsTableCell {
     func setupUI() {
         backgroundColor = .black
         accessoryType = .disclosureIndicator
-        
         titleLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 20)
         titleLabel.textColor = .white
         titleLabel.numberOfLines = 0
-        
         postDetailsLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 17)
         postDetailsLabel.textColor = .lightGray
-        
         pointsLabel.font = .systemFont(ofSize: 17)
         pointsLabel.textColor = .systemBlue
-        
         pointsImageView.contentMode = .scaleAspectFit
         pointsImageView.tintColor = .systemBlue
-        
         commentsLabel.font = .systemFont(ofSize: 17)
         commentsLabel.textColor = .systemOrange
-        
         commentsImageView.contentMode = .scaleAspectFit
         commentsImageView.tintColor = .systemOrange
-        
         let bottomRow = UIStackView(arrangedSubviews: [pointsImageView, pointsLabel, commentsImageView, commentsLabel,UIView()])
         bottomRow.axis = .horizontal
         bottomRow.distribution = .fill
@@ -57,13 +48,11 @@ class NewTableCell: UITableViewCell {
         bottomRow.spacing = 8
         bottomRow.setCustomSpacing(2, after: pointsImageView)
         bottomRow.setCustomSpacing(2, after: commentsImageView)
-
         let vStack = UIStackView(arrangedSubviews: [titleLabel, postDetailsLabel, bottomRow])
         vStack.axis = .vertical
         vStack.spacing = 8
         vStack.translatesAutoresizingMaskIntoConstraints = false
         vStack.setCustomSpacing(10, after: titleLabel)
-
         contentView.addSubview(vStack)
         NSLayoutConstraint.activate([
             vStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
@@ -71,5 +60,12 @@ class NewTableCell: UITableViewCell {
             vStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
             vStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
         ])
+    }
+    
+    func loadCellData(news: NewsDetails){
+        titleLabel.text = news.title
+        postDetailsLabel.text = "\(news.author ?? " ") . \(news.created_at ?? " ") . by \(news.author ?? " ")"
+        pointsLabel.text = "\(news.points ?? 0)"
+        commentsLabel.text = "\(news.num_comments ?? 0)"
     }
 }

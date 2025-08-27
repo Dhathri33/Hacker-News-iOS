@@ -17,31 +17,12 @@ class ContactsViewController: UIViewController {
     let searchBar = UISearchBar()
     
     //MARK: View Lifecycle Methods
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Contacts"
-        contactsTableView.dataSource = self
-        contactsTableView.delegate = self
-        searchBar.delegate = self
+        setupDelegates()
         setupUI()
-        let objContactsRows1: ContactsRow = ContactsRow(profileImage: "profilem1", contactName: "Mohammad Hussain", contactTitle: "SEO Specialist", flagImage: "flag1")
-        let objContactsRows2: ContactsRow = ContactsRow(profileImage: "profilem2", contactName: "John Young", contactTitle: "Interactive Designer", flagImage: "flag2")
-        let objContactsRows3: ContactsRow = ContactsRow(profileImage: "profilew1", contactName: "Tamilarasi Mohan", contactTitle: "Architect", flagImage: "flag3")
-        let objContactsRows4: ContactsRow = ContactsRow(profileImage: "profilew2", contactName: "Kim Yu", contactTitle: "Economist", flagImage: "flag4")
-        let objContactsRows5: ContactsRow = ContactsRow(profileImage: "profilem3", contactName: "Derek Fowler", contactTitle: "Web Strategist", flagImage: "flag5")
-        let objContactsRows6: ContactsRow = ContactsRow(profileImage: "profilew3", contactName: "Shreya Nithin", contactTitle: "Product Designer", flagImage: "flag6")
-        let objContactsRows7: ContactsRow = ContactsRow(profileImage: "profilew4", contactName: "Emily Adams", contactTitle: "Editor", flagImage: "flag7")
-        
-        contactsRow.append(objContactsRows1)
-        contactsRow.append(objContactsRows2)
-        contactsRow.append(objContactsRows3)
-        contactsRow.append(objContactsRows4)
-        contactsRow.append(objContactsRows5)
-        contactsRow.append(objContactsRows6)
-        contactsRow.append(objContactsRows7)
-        
-        visibleContacts = contactsRow
-        contactsTableView.reloadData()
+        buildData()
     }
 }
 
@@ -55,11 +36,7 @@ extension ContactsViewController: UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactsTableCell") as? ContactsTableCell else {
             return UITableViewCell()
         }
-        let row = visibleContacts[indexPath.row]
-        cell.profileImageView.image = UIImage(named: row.profileImage)
-        cell.contactNameLabel.text = row.contactName
-        cell.contactTitleLabel.text = row.contactTitle
-        cell.flagImageView.image = UIImage(named: row.flagImage)
+        cell.loadCellData(contact: visibleContacts[indexPath.row])
         return cell
     }
 }
@@ -95,6 +72,12 @@ extension ContactsViewController: UISearchBarDelegate {
 //MARK: Helper functions
 
 extension ContactsViewController {
+    fileprivate func buildData() {
+        contactsRow = ContactsRow.sampleData()
+        visibleContacts = contactsRow
+        contactsTableView.reloadData()
+    }
+    
     private func applyFilter(_ text: String) {
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
@@ -108,8 +91,15 @@ extension ContactsViewController {
         contactsTableView.reloadData()
     }
     
+    fileprivate func setupDelegates() {
+        contactsTableView.dataSource = self
+        contactsTableView.delegate = self
+        searchBar.delegate = self
+    }
+    
     func setupUI() {
         view.backgroundColor = .cyan
+        title = "Contacts"
         searchBar.placeholder = "Search"
         searchBar.sizeToFit()
         contactsTableView.tableHeaderView = searchBar
