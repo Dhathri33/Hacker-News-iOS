@@ -11,11 +11,9 @@ class SettingsViewController: UIViewController {
     
     //MARK: Properties
     
-    var settingsRows: [SettingsRow] = []
-    var sections: [SettingsSection] = []
-    var visibleSections: [SettingsSection] = []
     let settingsTableView = UITableView(frame: .zero, style: .insetGrouped)
     let searchBar = UISearchBar()
+    var settingsViewModel: SettingsViewModel = SettingsViewModel()
     
     //MARK: View Lifecycle Methods
     
@@ -31,16 +29,16 @@ class SettingsViewController: UIViewController {
 
 extension SettingsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        visibleSections.count
+        settingsViewModel.getNumberOfSections()
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        visibleSections[section].rows.count
+        settingsViewModel.getNumberOfRows(in: section)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.reuseIdentifier, for: indexPath) as? SettingsTableCell else {
             return UITableViewCell()
         }
-        cell.loadCellData(setting: visibleSections[indexPath.section].rows[indexPath.row])
+        cell.loadCellData(setting: settingsViewModel.getRow(at: indexPath))
         return cell
     }
 }
@@ -49,7 +47,8 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        applyFilter(searchText)
+        settingsViewModel.applyFilter(searchText)
+        buildData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
@@ -58,7 +57,8 @@ extension SettingsViewController: UISearchBarDelegate {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
-        applyFilter("")
+        settingsViewModel.applyFilter("")
+        buildData()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -69,26 +69,6 @@ extension SettingsViewController: UISearchBarDelegate {
 
 extension SettingsViewController {
     fileprivate func buildData() {
-        sections = SettingsSection.sampleData()
-        visibleSections = sections
-        settingsTableView.reloadData()
-    }
-    
-    private func applyFilter(_ text: String) {
-        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else {
-            visibleSections = sections
-            settingsTableView.reloadData()
-            return
-        }
-        let lower = query.lowercased()
-        visibleSections = sections.compactMap { section in
-            let filteredRows = section.rows.filter { row in
-                let inTitle = row.title.lowercased().contains(lower)
-                return inTitle
-            }
-            return filteredRows.isEmpty ? nil : SettingsSection(rows: filteredRows)
-        }
         settingsTableView.reloadData()
     }
     
