@@ -11,10 +11,9 @@ class ContactsViewController: UIViewController {
     
     //MARK: Properties
     
-    var contactsRow: [ContactsRow] = []
-    var visibleContacts: [ContactsRow] = []
     let contactsTableView = UITableView()
     let searchBar = UISearchBar()
+    var contactsViewModel: ContactsViewModel = ContactsViewModel()
     
     //MARK: View Lifecycle Methods
         
@@ -30,13 +29,13 @@ class ContactsViewController: UIViewController {
 
 extension ContactsViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        visibleContacts.count
+        contactsViewModel.getNumberOfRows()
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactsTableCell") as? ContactsTableCell else {
             return UITableViewCell()
         }
-        cell.loadCellData(contact: visibleContacts[indexPath.row])
+        cell.loadCellData(contact: contactsViewModel.getContact(Row: indexPath.row))
         return cell
     }
 }
@@ -45,7 +44,7 @@ extension ContactsViewController: UITableViewDataSource{
 
 extension ContactsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        105
+        contactsViewModel.getRowHeight()
     }
 }
 
@@ -53,7 +52,8 @@ extension ContactsViewController: UITableViewDelegate {
 
 extension ContactsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        applyFilter(searchText)
+        contactsViewModel.applyFilter(searchText)
+        contactsTableView.reloadData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
@@ -62,7 +62,8 @@ extension ContactsViewController: UISearchBarDelegate {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
-        applyFilter("")
+        contactsViewModel.applyFilter("")
+        contactsTableView.reloadData()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -73,21 +74,6 @@ extension ContactsViewController: UISearchBarDelegate {
 
 extension ContactsViewController {
     fileprivate func buildData() {
-        contactsRow = ContactsRow.sampleData()
-        visibleContacts = contactsRow
-        contactsTableView.reloadData()
-    }
-    
-    private func applyFilter(_ text: String) {
-        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else {
-            visibleContacts = contactsRow
-            contactsTableView.reloadData()
-            return
-        }
-        visibleContacts = contactsRow.filter {
-            $0.contactName.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil
-        }
         contactsTableView.reloadData()
     }
     

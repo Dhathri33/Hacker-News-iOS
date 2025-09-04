@@ -7,23 +7,37 @@
 
 import UIKit
 
-class ContactsViewModel: UIViewController {
+class ContactsViewModel {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    var contactsRow: [ContactsRow] = []
+    var visibleContacts: [ContactsRow] = []
+    
+    init() {
+        contactsRow = ContactsRow.sampleData()
+        visibleContacts = contactsRow
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func getNumberOfRows() -> Int {
+        return visibleContacts.count
     }
-    */
-
+    
+    func getContact(Row: Int) -> ContactsRow {
+        return visibleContacts[Row]
+    }
+    
+    func getRowHeight() -> CGFloat {
+        105
+    }
+    
+    func applyFilter(_ text: String) {
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            visibleContacts = contactsRow
+            return
+        }
+        visibleContacts = contactsRow.filter {
+            $0.contactName.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil
+        }
+    }
+    
 }
