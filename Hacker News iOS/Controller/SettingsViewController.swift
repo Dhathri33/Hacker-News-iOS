@@ -21,7 +21,7 @@ class SettingsViewController: UIViewController {
         super.viewDidLoad()
         setupDelegates()
         setupUI()
-        buildData()
+        reloadData()
     }
 }
 
@@ -38,7 +38,7 @@ extension SettingsViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.reuseIdentifier, for: indexPath) as? SettingsTableCell else {
             return UITableViewCell()
         }
-        cell.loadCellData(setting: settingsViewModel.getRow(at: indexPath))
+        cell.loadCellData(setting: settingsViewModel.getRow(section: indexPath.section, row: indexPath.row))
         return cell
     }
 }
@@ -48,7 +48,7 @@ extension SettingsViewController: UITableViewDataSource {
 extension SettingsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         settingsViewModel.applyFilter(searchText)
-        buildData()
+        reloadData()
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
@@ -58,7 +58,7 @@ extension SettingsViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton = false
         settingsViewModel.applyFilter("")
-        buildData()
+        reloadData()
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -68,7 +68,7 @@ extension SettingsViewController: UISearchBarDelegate {
 //MARK: Helper functions
 
 extension SettingsViewController {
-    fileprivate func buildData() {
+    fileprivate func reloadData() {
         settingsTableView.reloadData()
     }
     

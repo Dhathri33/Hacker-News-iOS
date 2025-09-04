@@ -5,8 +5,6 @@
 //  Created by Dhathri Bathini on 9/4/25.
 //
 
-import UIKit
-
 class SettingsViewModel {
 
     var settingsRows: [SettingsRow] = []
@@ -30,8 +28,8 @@ class SettingsViewModel {
         return visibleSections[index]
     }
     
-    func getRow(at indexPath: IndexPath) -> SettingsRow {
-        return visibleSections[indexPath.section].rows[indexPath.row]
+    func getRow(section: Int, row: Int) -> SettingsRow {
+        return visibleSections[section].rows[row]
     }
     
     func applyFilter(_ text: String) {
