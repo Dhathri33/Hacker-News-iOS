@@ -12,12 +12,11 @@ class NewsViewController: UIViewController {
     //MARK: Properties
     
     @IBOutlet weak var tableViewList: UITableView!
-    var newsList: [News] = []
+    var newsViewModel: NewsViewModel = NewsViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegates()
-        buildData()
     }
 }
 
@@ -25,14 +24,14 @@ class NewsViewController: UIViewController {
 
 extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        newsList.count
+        newsViewModel.getNumberOfRows()
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "NewsTableCell") as? NewsTableCell else {
             return UITableViewCell()
         }
-       cell.loadCellData(news: newsList[indexPath.row])
-       return cell
+        cell.loadCellData(news: newsViewModel.getNews(Row: indexPath.row))
+        return cell
     }
 }
 
@@ -40,17 +39,13 @@ extension NewsViewController: UITableViewDataSource {
 
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        190
+        newsViewModel.getRowHeight()
     }
 }
 
 //MARK: Helper functions
 
 extension NewsViewController {
-    fileprivate func buildData() {
-        newsList = News.sampleData()
-    }
-    
     fileprivate func setupDelegates() {
         tableViewList.dataSource = self
         tableViewList.delegate = self

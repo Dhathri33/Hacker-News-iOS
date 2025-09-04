@@ -13,7 +13,7 @@ class NewNewsViewController: UIViewController {
     
     let tableView = UITableView()
     let titleLabel = UILabel()
-    var newsList: [NewsDetails] = []
+    var newNewsViewModel: NewNewsViewModel = NewNewsViewModel()
     
     //MARK: View Lifecycle Methods
     
@@ -21,7 +21,6 @@ class NewNewsViewController: UIViewController {
         super.viewDidLoad()
         setupDelegates()
         setupUI()
-        buildData()
     }
 }
 
@@ -29,13 +28,13 @@ class NewNewsViewController: UIViewController {
 
 extension NewNewsViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        newsList.count
+        newNewsViewModel.getNumberOfRows()
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NewNewsTableCell.reuseIdentifier, for: indexPath) as? NewNewsTableCell else {
             return UITableViewCell()
         }
-        cell.loadCellData(news: newsList[indexPath.row])
+        cell.loadCellData(news: newNewsViewModel.getNews(Row: indexPath.row))
         return cell
     }
 }
@@ -44,16 +43,13 @@ extension NewNewsViewController: UITableViewDataSource{
 
 extension NewNewsViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        130
+        newNewsViewModel.getRowHeight()
     }
 }
 
 //MARK: Helper functions
 
 extension NewNewsViewController {
-    fileprivate func buildData() {
-        newsList = NewsDetails.sampleData()
-    }
     
     func setupUI() {
         view.backgroundColor = .black
@@ -65,7 +61,6 @@ extension NewNewsViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .black
         tableView.register(NewNewsTableCell.self, forCellReuseIdentifier: NewNewsTableCell.reuseIdentifier)
-        // Vertical layout
         let vStack = UIStackView(arrangedSubviews: [titleLabel, tableView])
         vStack.axis = .vertical
         vStack.spacing = 20
@@ -80,7 +75,7 @@ extension NewNewsViewController {
         ])
     }
     
-    fileprivate func setupDelegates() {
+    func setupDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
     }
